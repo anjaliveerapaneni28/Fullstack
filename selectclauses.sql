@@ -1,3 +1,6 @@
+-- Active: 1767517213029@@127.0.0.1@3306@fullstack
+use fullstack;
+
 --WHERE clause:
 SELECT * FROM Student WHERE Department = 'CSE';
 

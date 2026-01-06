@@ -1,3 +1,5 @@
+
+use fullstack;
 -- Inserting into Student Table
 INSERT INTO Student VALUES 
 ('1MS23CS001', 'Arjun Kumar', 'arjun@mail.com', '9845011223', 'CSE'),
