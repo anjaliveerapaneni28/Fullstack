@@ -6,7 +6,7 @@ INSERT INTO Student VALUES
 ('1MS23CS004', 'Priya Das', 'priya@mail.com', '9845044556', 'ECE'),
 ('1MS23CS005', 'Amit Singh', 'amit@mail.com', '9845055667', 'IT');
 
-
+--inserting into course table
 INSERT INTO Course VALUES 
 ('CS101', 'Database Management', 101, '1MS23CS001', 'prof_smith@vtu.edu'),
 ('IS202', 'Data Structures', 102, '1MS23CS002', 'prof_jones@vtu.edu'),
