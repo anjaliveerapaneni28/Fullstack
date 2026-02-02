@@ -10,19 +10,19 @@ function validateForm() {
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
 
-    // VTU should not be empty
+    
     if (vtu === "") {
         alert("Please enter your VTU Number");
         return false;
     }
-    // Simple email validation
+ 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
         alert("Please enter a valid Email address");
         return false;
     }
 
-    // Phone number should be 10 digits
+
     const phonePattern = /^[0-9]{10}$/;
     if (!phonePattern.test(phone)) {
         alert("Please enter a valid 10-digit Phone Number");
@@ -33,16 +33,20 @@ function validateForm() {
     return true;
 }
 </script>
+
 </head>
 <body>
 <h2>Student Information Form</h2>
 <form onsubmit="return validateForm()">
-    <label>VTU Number:</label><br>
-    <input type="text" id="vtu" placeholder="Enter VTU Number"><br><br>
-    <label>Email ID:</label><br>
-    <input type="text" id="email" placeholder="Enter Email"><br><br>
-    <label>Phone Number:</label><br>
-    <input type="text" id="phone" placeholder="Enter Phone Number"><br><br>
+    <label>VTU Number:</label>
+    <input type="text" id="vtu" placeholder="12345" required>
+    <label>Email ID:</label>
+    <input type="text" id="email" placeholder="vtu12345@veltech.edu.in" required>
+    <label>Phone Number:</label>
+     <input type="tel" id="phone" name="phone"
+         placeholder="+91-9876543210"
+         pattern="^\+?[0-9]{1,4}[-\s]?[0-9]{6,14}$"
+         required>
     <button type="submit">Submit</button>
 </form>
 </body>
