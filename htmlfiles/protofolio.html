@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Anjali — Portfolio</title>
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg-1:#031425;   /* deep navy */
+      --bg-2:#072b3a;   /* teal-dark */
+      --accent-1:#1fb6c8; /* cyan */
+      --accent-2:#2b7be9; /* blue */
+      --glass: rgba(255,255,255,0.06);
+      --glass-strong: rgba(255,255,255,0.08);
+      --card: rgba(255,255,255,0.03);
+      --muted: rgba(255,255,255,0.75);
+      --radius-lg:24px;
+      --radius-md:14px;
+      --shadow: 0 8px 30px rgba(3,20,37,0.6);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Poppins", "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      color: #eaf6ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+
+    /* Canvas stars fixed behind everything */
+    #star-canvas{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    /* Glass navbar */
+    .nav {
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(8px) saturate(120%);
+      background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 18px;
+      box-shadow: var(--shadow);
+    }
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .brand .logo {
+      width:46px; height:46px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(180deg,var(--accent-2), var(--accent-1));
+      color:white;
+      font-weight:700;
+      font-size:20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+    .brand .title {
+      font-size:18px;
+      color: #cfeffd;
+      letter-spacing:0.6px;
+    }
+
+    /* Desktop nav links */
+    .nav-links {
+      display:flex;
+      gap:18px;
+      align-items:center;
+    }
+    .nav-links a {
+      color: #d6f7ff;
+      text-decoration:none;
+      padding:8px 12px;
+      border-radius:10px;
+      transition: .18s ease;
+      font-weight:600;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,0.02); transform: translateY(-2px) }
+
+    .cta-resume {
+      background: linear-gradient(90deg,var(--accent-2), var(--accent-1));
+      color: white;
+      padding:8px 14px;
+      border-radius:12px;
+      box-shadow: 0 8px 22px rgba(27,94,134,0.25);
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    /* Mobile menu */
+    .hamburger {
+      display:none;
+      width:46px; height:46px;
+      border-radius:10px;
+      background: rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.02);
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+
+    /* Hero */
+    .hero {
+      position:relative;
+      z-index:2;
+      display:flex;
+      gap:36px;
+      align-items:center;
+      padding:64px 6%;
+      max-width:1200px;
+      margin: 26px auto;
+      color: #e9fbff;
+    }
+
+    .hero-card{
+      flex:1.1;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--radius-lg);
+      padding:28px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.03);
+      display:flex;
+      gap:22px;
+      align-items:center;
+    }
+
+    .hero-left{
+      flex:1;
+      padding-left:6px;
+    }
+    .title-main {
+      font-size:40px;
+      line-height:1.02;
+      margin:0 0 12px 0;
+      letter-spacing:1px;
+    }
+    .title-main .accent { color: var(--accent-1); font-weight:800 }
+    .subtitle {
+      color: rgba(234,246,255,0.9);
+      margin-bottom:18px;
+      font-size:16px;
+    }
+    .hero-ctas { display:flex; gap:12px; align-items:center; flex-wrap:wrap }
+    .btn {
+      background: linear-gradient(90deg,var(--accent-2), var(--accent-1));
+      color:#fff;
+      padding:10px 16px;
+      border-radius:12px;
+      text-decoration:none;
+      font-weight:700;
+      box-shadow: 0 10px 22px rgba(27,94,134,0.18);
+    }
+    .btn.secondary {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.06);
+      color: #bfefff;
+      padding:10px 14px;
+    }
+
+    /* Avatar */
+    .hero-right{
+      width:260px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    .avatar-wrap{
+      width:220px; height:220px;
+      border-radius:50%;
+      padding:8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      display:grid;
+      place-items:center;
+      box-shadow: 0 18px 40px rgba(3,20,37,0.6);
+    }
+    .avatar-wrap img{ width:200px; height:200px; border-radius:50%; object-fit:cover; display:block }
+
+    /* Section containers */
+    .section {
+      max-width:1100px;
+      margin:36px auto;
+      padding:28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.02);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+      z-index:2;
+      position:relative;
+    }
+
+    h2.section-title {
+      margin:0 0 18px 0;
+      color:#dff7ff;
+      font-size:22px;
+      padding-left:8px;
+      border-left:4px solid rgba(31,182,200,0.12);
+    }
+
+    /* Projects grid */
+    .projects-grid{
+      display:grid;
+      gap:18px;
+      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      margin-top:12px;
+    }
+    .proj-card{
+      background: var(--card);
+      padding:16px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.03);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height:160px;
+    }
+    .proj-card h3{ margin:0 0 8px 0; color:#dff7ff }
+    .proj-card p{ color: rgba(230,250,255,0.85); font-size:14px }
+    .proj-actions { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap }
+    .proj-actions a { padding:8px 12px; border-radius:10px; text-decoration:none; color:white; font-weight:700; font-size:14px }
+    .pdf-btn { background: linear-gradient(180deg,#214a7d,#2c6ea8) }
+    .live-btn { background: linear-gradient(90deg,#1fb6c8,#2b7be9) }
+
+    /* Skills */
+    .skill {
+      margin-bottom:16px;
+    }
+    .skill .label { font-weight:700; color:#dff7ff; margin-bottom:6px; display:block }
+    .progress-bar {
+      height:12px;
+      width:100%;
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .progress {
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg,var(--accent-1), var(--accent-2));
+      transition: width 1.6s cubic-bezier(.2,.9,.2,1);
+    }
+    .skill-meta { display:flex; justify-content:space-between; margin-bottom:6px; color: rgba(231,249,255,0.8) }
+
+    /* Contact */
+    .contact-grid {
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:20px;
+    }
+    .contact-card {
+      padding:16px;
+      border-radius:12px;
+      background: rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .contact-card input, .contact-card textarea {
+      background: rgba(255,255,255,0.02);
+      color: #eaf6ff;
+      border: 1px solid rgba(255,255,255,0.04);
+      padding:10px;
+      border-radius:8px;
+      width:100%;
+      margin-bottom:10px;
+      font-size:14px;
+    }
+    .contact-card textarea{ min-height:120px; resize:vertical }
+    .contact-info { font-size:14px; color: rgba(230,250,255,0.9) }
+
+    /* Footer */
+    footer {
+      text-align:center;
+      padding:18px;
+      color: rgba(230,250,255,0.7);
+      margin-top:40px;
+    }
+
+    /* Responsive */
+    @media (max-width:960px){
+      .hero{ padding:36px 5%; gap:18px; flex-direction:column }
+      .hero-right{ display:flex; justify-content:center; width:100% }
+      .contact-grid{ grid-template-columns:1fr; }
+      .nav-links{ display:none }
+      .hamburger{ display:flex }
+    }
+
+    /* Mobile slide menu */
+    .mobile-menu {
+      position:fixed;
+      top:72px;
+      right:16px;
+      width:260px;
+      background: rgba(2,12,20,0.9);
+      border-radius:12px;
+      padding:18px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.6);
+      transform: translateY(-12px) scale(.98);
+      opacity:0;
+      pointer-events:none;
+      transition: all .22s ease;
+      z-index:60;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .mobile-menu.show { opacity:1; pointer-events:auto; transform: translateY(0) scale(1) }
+    .mobile-menu a { display:block; color:#dff7ff; text-decoration:none; padding:12px 8px; border-radius:8px; font-weight:700 }
+    .mobile-menu a:hover{ background: rgba(255,255,255,0.02) }
+  </style>
+</head>
+<body>
+
+  <!-- Star canvas -->
+  <canvas id="star-canvas"></canvas>
+
+  <!-- NAV -->
+  <nav class="nav" role="navigation" aria-label="Main Navigation">
+    <div class="brand">
+      <div class="logo">AV</div>
+      <div class="title">ANJALI VEERAPANENI | Portfolio</div>
+    </div>
+
+    <div class="nav-links" aria-hidden="false">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
+      <a href="#resume" class="cta-resume">Download CV</a>
+    </div>
+
+    <button class="hamburger" id="hambBtn" aria-label="Open menu">
+      <i class="fa fa-bars" style="color:#cfeffd"></i>
+    </button>
+  </nav>
+
+  <!-- Mobile slide menu -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#home" onclick="toggleMobileMenu()">Home</a>
+    <a href="#about" onclick="toggleMobileMenu()"> About</a>
+    <a href="#projects" onclick="toggleMobileMenu()">Projects</a>
+    <a href="#resume" onclick="toggleMobileMenu()"> Resume</a>
+    <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
+    <div style="height:10px"></div>
+    <a href="#resume" class="cta-resume" style="display:inline-block;text-align:center">Download CV</a>
+  </div>
+
+  <!-- HERO -->
+  <main id="home">
+    <section class="hero" data-aos="fade-up">
+      <div class="hero-card">
+        <div class="hero-left">
+          <h1 class="title-main">Hello, I'm <span class="accent">ANJALI</span></h1>
+          <div class="subtitle">Student at Vel Tech University| Aspiring Web Developer | Data Analyst</div>
+
+          <div class="hero-ctas">
+            <a class="btn" href="#projects">View Projects</a>
+            <a class="btn secondary" href="#contact">Get in touch</a>
+          </div>
+        </div>
+
+        <div class="hero-right" aria-hidden="false">
+          <div class="avatar-wrap" data-aos="zoom-in">
+          
+            <img src="images/img.png" alt="Profile avatar">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section" data-aos="fade-up">
+      <h2 class="section-title">Let me introduce myself</h2>
+      <p style="color:rgba(230,250,255,0.9); line-height:1.6; font-size:15px;">
+        I am currently a student at Vel Tech Rangarajan Dr. Sagunthala R&D Institute of Science and Technology, passionate about building a career in the IT sector with a strong interest in web development. I have gained hands-on experience as an intern at Digit IT, where I enhanced my skills in creating user-friendly websites and exploring modern technologies. 
+I am eager to keep learning, growing, and contributing to innovative projects in the tech industry. <strong>python, Javascript</strong> and frameworks for both front-end and back-end work.
+        I love creating interfaces that are clear, accessible and beautiful.
+      </p>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section" data-aos="fade-up">
+      <h2 class="section-title">Projects</h2>
+
+      <div class="projects-grid">
+        <article class="proj-card" data-aos="fade-up">
+          <div>
+            <h3>Portfolio Website</h3>
+            <p>Personal portfolio built with modern CSS, animations and responsive layout.</p>
+          </div>
+          <div class="proj-actions">
+            <a class="pdf-btn" href="#" target="_blank" title="Download PDF"> PDF</a>
+            <a class="live-btn" href="#" target="_blank" title="Live demo">🔗 Live</a>
+          </div>
+        </article>
+
+        <article class="proj-card" data-aos="fade-up" data-aos-delay="120">
+          <div>
+            <h3>Flask Login System</h3>
+            <p>Secure authentication flow with Flask & SQLite. Token-based session management.</p>
+          </div>
+          <div class="proj-actions">
+            <a class="pdf-btn" href="#" target="_blank"> PDF</a>
+            <a class="live-btn" href="#" target="_blank"> Repo</a>
+          </div>
+        </article>
+
+        <article class="proj-card" data-aos="fade-up" data-aos-delay="240">
+          <div>
+            <h3>MyGuruV</h3>
+            <p>Real-time Professor Voting application.</p>
+          </div>
+          <div class="proj-actions">
+            <a class="pdf-btn" href="#" target="_blank"> PDF</a>
+            <a class="live-btn" href="https://github.com/anjaliveerapaneni28/MyGuruV-Project.git" target="_blank">🔗 Live</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section" data-aos="fade-up">
+      <h2 class="section-title">Skills</h2>
+
+      <div style="display:grid; gap:14px; max-width:820px;">
+        <div class="skill" data-aos="fade-right">
+          <div class="skill-meta"><span class="label">HTML & CSS</span><span>90%</span></div>
+          <div class="progress-bar"><div class="progress" data-value="90"></div></div>
+        </div>
+
+        <div class="skill" data-aos="fade-right" data-aos-delay="80">
+          <div class="skill-meta"><span class="label">JavaScript</span><span>45%</span></div>
+          <div class="progress-bar"><div class="progress" data-value="85"></div></div>
+        </div>
+
+        <div class="skill" data-aos="fade-right" data-aos-delay="160">
+          <div class="skill-meta"><span class="label">Python & Flask</span><span>70%</span></div>
+          <div class="progress-bar"><div class="progress" data-value="78"></div></div>
+        </div>
+
+        <div class="skill" data-aos="fade-right" data-aos-delay="240">
+          <div class="skill-meta"><span class="label">Data Structures & Algorithm</span><span>40%</span></div>
+          <div class="progress-bar"><div class="progress" data-value="80"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section" data-aos="fade-up">
+      <h2 class="section-title">Contact</h2>
+
+      <div class="contact-grid">
+        <div class="contact-card" data-aos="fade-right">
+          <form id="contactForm">
+            <input type="text" name="from_name" placeholder="Your name" required />
+            <input type="email" name="from_email" placeholder="Your email" required />
+            <textarea name="message" placeholder="Your message" required></textarea>
+            <div style="display:flex;gap:10px;align-items:center">
+              <button type="submit" class="btn">Send Message</button>
+              <div id="form-status" style="color:#cfeffd;font-weight:700"></div>
+            </div>
+          </form>
+        </div>
+
+        <aside class="contact-card" data-aos="fade-left">
+          <div class="contact-info">
+            <p><strong>Location:</strong> chennai, India</p>
+            <p><strong>Email:</strong> <a href="mailto:youremail@example.com" style="color:var(--accent-1)">anjaliveerapaneni28@gmail.com</a></p>
+            <p style="margin-top:12px">Connect on social media:</p>
+            <div style="display:flex;gap:10px;margin-top:8px">
+              <a href="https://github.com/anjaliveerapaneni28" style="color:var(--accent-1)"><i class="fab fa-github fa-lg"></i></a>
+              <a href="https://www.linkedin.com/in/veerapaneni-anjali-7b0745358?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" style="color:var(--accent-1)"><i class="fab fa-linkedin fa-lg"></i></a>
+              <a href="https://www.instagram.com/anjali_veerapaneni18?igsh=MTZkNDhkY2J2eTRuYQ==" style="color:var(--accent-1)"><i class="fab fa-instagram fa-lg"></i></a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Resume anchor -->
+    <section id="resume" class="section" data-aos="fade-up">
+      <h2 class="section-title">Resume</h2>
+      <p style="color:rgba(230,250,255,0.9)">Download my resume:</p>
+      <a class="btn" href="#" download>Download CV</a>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> Anjali Veerapaneni • Built with care — Cosmic Blue theme
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <script>
+   
+    AOS.init({ duration: 700, once: true, offset: 120 });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+
+    const hambBtn = document.getElementById('hambBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    function toggleMobileMenu(){
+      mobileMenu.classList.toggle('show');
+    }
+    hambBtn.addEventListener('click', toggleMobileMenu);
+
+    
+    document.addEventListener('click', (e) => {
+      if(!mobileMenu.contains(e.target) && !hambBtn.contains(e.target)) {
+        mobileMenu.classList.remove('show');
+      }
+    });
+
+    // Skill progress animation on scroll (AOS does the reveal, this sets widths)
+    function animateSkills(){
+      document.querySelectorAll('.progress').forEach(el=>{
+        const val = el.getAttribute('data-value') || '60';
+        el.style.width = val + '%';
+      });
+    }
+    // Run once after AOS inits (small delay)
+    setTimeout(animateSkills, 400);
+
+    // EmailJS contact form
+    emailjs.init('YOUR_PUBLIC_KEY'); // <-- REPLACE with your EmailJS public key
+
+    const contactForm = document.getElementById('contactForm');
+    const formStatus = document.getElementById('form-status');
+
+    contactForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      formStatus.textContent = 'Sending…';
+
+      // Use sendForm with a service ID and template ID that you create in EmailJS
+      emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
+      .then(() => {
+        formStatus.textContent = 'Message sent ';
+        contactForm.reset();
+      }, (err) => {
+        console.error(err);
+        formStatus.textContent = 'Send failed — try again.';
+      });
+    });
+
+    /* --- Particle starfield on canvas (subtle) --- */
+    (function(){
+      const canvas = document.getElementById('star-canvas');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = innerWidth;
+      let h = canvas.height = innerHeight;
+      const stars = [];
+      const STAR_COUNT = Math.floor((w*h)/9000); // scale by viewport
+
+      function rand(min,max){ return Math.random()*(max-min)+min }
+
+      function init(){
+        stars.length = 0;
+        for(let i=0;i<STAR_COUNT;i++){
+          stars.push({
+            x: Math.random()*w,
+            y: Math.random()*h,
+            r: rand(0.3,1.8),
+            a: rand(0.2,0.95),
+            vx: rand(-0.02,0.02),
+            vy: rand(0.01,0.05),
+            tw: rand(1500,4000), // twinkle time
+            t0: Date.now()+rand(-4000,4000)
+          });
+        }
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+        // subtle vignette
+        const g = ctx.createLinearGradient(0,0,0,h);
+        g.addColorStop(0,'rgba(0,0,0,0.06)');
+        g.addColorStop(1,'rgba(0,0,0,0.10)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,w,h);
+
+        stars.forEach(s=>{
+          const t = (Date.now()-s.t0)/s.tw;
+          const a = s.a * (0.6 + 0.4*Math.sin(t*Math.PI*2));
+          ctx.beginPath();
+          ctx.globalAlpha = a;
+          ctx.fillStyle = '#d5f7ff';
+          ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          s.x += s.vx;
+          s.y += s.vy;
+          if(s.x < 0) s.x = w;
+          if(s.x > w) s.x = 0;
+          if(s.y > h) s.y = 0;
+        });
+
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', ()=>{
+        w = canvas.width = innerWidth;
+        h = canvas.height = innerHeight;
+        init();
+      });
+
+      init();
+      draw();
+    })();
+  </script>
+</body>
+</html>
